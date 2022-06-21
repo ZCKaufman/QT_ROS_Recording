@@ -1,0 +1,20 @@
+<package format="2">
+  <name>qt_ros_recording</name>
+  <version>0.0.1</version>
+  <description>
+    Takes the visual ROS topic from the QT robot and records it to a .avi file.
+  </description>
+  <maintainer email="zkaufman@protonmail.com">Zachary Kaufman</maintainer>
+  <license>TODO</license>
+
+  <author>Zachary Kaufman</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>roscpp</depend>
+  <depend>std_msgs</depend>
+
+  <build_depend>message_generation</build_depend>
+  <exec_depend>message_runtime</exec_depend>
+  <exec_depend>rospy</exec_depend>
+</package>
