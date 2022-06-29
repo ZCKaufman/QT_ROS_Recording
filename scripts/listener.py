@@ -11,35 +11,60 @@ from PIL import Image
 from datetime import datetime
 
 frame = 0
-size = (2048, 1536) # 
-frameRate = 15.0 # 
+duration = False
+size = (1280, 800) # This is from the Azure Kinect /rgb/image_raw topic
+frameRate = 30.0 # This is NOT the default FPS for the Azure Kinect. Azure Kinect defaults on 5, change this in driver.launch in the drivers folder of the Azure Kinect ROS Driver
 now = datetime.now()
 fileName = "output/" + now.strftime("%d_%m_%Y-%H_%M_%S")
 fourcc = cv.VideoWriter_fourcc(*'MJPG')
 vid = cv.VideoWriter(fileName + ".avi", fourcc, frameRate, size, True)
 
+def endProgram():
+    print("Shutdown initiated. Ending program.")
+    vid.release()
+
 def visualRecorder(data):
     global frame
-    if(vid.isOpened() and frame < (int(sys.argv[2]) * int(frameRate))):
-        bridge = CvBridge()
-        img = bridge.imgmsg_to_cv2(data)
-        img = cv.cvtColor(img, cv.COLOR_BGRA2BGR)
-        vid.write(img)
-        frame += 1
+    global duration
+    # Converting from Azure image to OpenCV image
+    if(vid.isOpened()):
+        if(not duration or frame < (int(sys.argv[2]) * int(frameRate))):
+            bridge = CvBridge()
+            img = bridge.imgmsg_to_cv2(data)
+            img = cv.cvtColor(img, cv.COLOR_BGRA2BGR)
+            vid.write(img)
+            frame += 1
+        else:
+            print("Set duration reached.")
+            vid.release()
     else:
-        print("Video recorder turned off. Outputting file.")
-        vid.release()
-        sys.exit()
+        rospy.signal_shutdown("OpenCV VideoWriter is no longer open. Program ending.")
 
 
-def listener():
-    inter = 0
+def listener(setDuration):
+    global duration 
+    duration = setDuration
     rospy.init_node('listener', anonymous=True)
-    rospy.Subscriber("[TOPIC]", Img, visualRecorder)
+    rospy.on_shutdown(endProgram)
+
+    if(sys.argv[1] == "-r"):
+        rospy.Subscriber("/camera/color/image_raw", Img, visualRecorder)
+    else:
+        print("Error: Argument \'" + sys.argv[1] + "\' not recognized.")
+        sys.exit()
 
     # spin() simply keeps python from exiting until this node is stopped
     rospy.spin()
 
 
 if __name__ == '__main__':
-    listener()
+    if(len(sys.argv) < 2):
+        print("Error: Mode argument required")
+        sys.exit()
+    elif(sys.argv[1][0] != '-'):
+        print("Error: Argument \'" + sys.argv[1] + "\' is not recognized. Please enter valid mode.")
+    else:
+        if(len(sys.argv) > 2):
+            listener(True)
+        else:
+            listener(False)
