@@ -12,7 +12,7 @@ from datetime import datetime
 
 frame = 0
 duration = False
-size = (1280, 800) 
+size = (640, 480) 
 frameRate = 30.0 
 now = datetime.now()
 fileName = "output/" + now.strftime("%d_%m_%Y-%H_%M_%S")
