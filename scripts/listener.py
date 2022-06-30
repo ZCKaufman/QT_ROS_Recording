@@ -12,8 +12,8 @@ from datetime import datetime
 
 frame = 0
 duration = False
-size = (640, 480) 
-frameRate = 30.0 
+size = (640, 480) # Resolution of QT2 RealSense camera
+frameRate = 30.0 # Frame rate of QT2 RealSense camera
 now = datetime.now()
 fileName = "output/" + now.strftime("%d_%m_%Y-%H_%M_%S")
 fourcc = cv.VideoWriter_fourcc(*'MJPG')
