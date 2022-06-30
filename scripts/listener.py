@@ -31,6 +31,7 @@ def visualRecorder(data):
             bridge = CvBridge()
             img = bridge.imgmsg_to_cv2(data)
             img = cv.cvtColor(img, cv.COLOR_BGRA2BGR)
+            print(img.shape)
             vid.write(img)
             frame += 1
         else:
