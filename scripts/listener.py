@@ -12,8 +12,8 @@ from datetime import datetime
 
 frame = 0
 duration = False
-size = (1280, 800) # This is from the Azure Kinect /rgb/image_raw topic
-frameRate = 30.0 # This is NOT the default FPS for the Azure Kinect. Azure Kinect defaults on 5, change this in driver.launch in the drivers folder of the Azure Kinect ROS Driver
+size = (1280, 800) 
+frameRate = 30.0 
 now = datetime.now()
 fileName = "output/" + now.strftime("%d_%m_%Y-%H_%M_%S")
 fourcc = cv.VideoWriter_fourcc(*'MJPG')
@@ -26,7 +26,6 @@ def endProgram():
 def visualRecorder(data):
     global frame
     global duration
-    # Converting from Azure image to OpenCV image
     if(vid.isOpened()):
         if(not duration or frame < (int(sys.argv[2]) * int(frameRate))):
             bridge = CvBridge()
