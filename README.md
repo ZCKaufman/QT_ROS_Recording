@@ -6,6 +6,6 @@
 
 ## Running Instructions
 1. Make sure you are in the root of this directory on your QTPC, that means you should be in `catkin_ws/src/QT_ROS_Recording`
-2. Run "python scripts/listener.py -r" 
+2. Run "python scripts/listener.py" 
 3. The QT is now recording. To finish, hit `ctrl+c` on the keyboard
 4. The output video will be in .avi format and will be named today's date. It will be inside the "output" folder

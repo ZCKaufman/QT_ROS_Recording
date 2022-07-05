@@ -10,8 +10,6 @@ from sensor_msgs.msg import Image as Img
 from PIL import Image
 from datetime import datetime
 
-frame = 0
-duration = False
 size = (640, 480) # Resolution of QT2 RealSense camera
 frameRate = 30.0 # Frame rate of QT2 RealSense camera
 now = datetime.now()
@@ -24,47 +22,19 @@ def endProgram():
     vid.release()
 
 def visualRecorder(data):
-    global frame
-    global duration
     if(vid.isOpened()):
-        if(not duration or frame < (int(sys.argv[2]) * int(frameRate))):
-            bridge = CvBridge()
-            img = bridge.imgmsg_to_cv2(data)
-            img = cv.cvtColor(img, cv.COLOR_BGRA2BGR)
-            print(img.shape)
-            vid.write(img)
-            frame += 1
-        else:
-            print("Set duration reached.")
-            vid.release()
+        bridge = CvBridge()
+        img = bridge.imgmsg_to_cv2(data)
+        img = cv.cvtColor(img, cv.COLOR_BGRA2BGR)
+        vid.write(img)
     else:
         rospy.signal_shutdown("OpenCV VideoWriter is no longer open. Program ending.")
 
-
-def listener(setDuration):
-    global duration 
-    duration = setDuration
-    rospy.init_node('listener', anonymous=True)
+if __name__ == '__main__':
+    lrospy.init_node('listener', anonymous=True)
     rospy.on_shutdown(endProgram)
-
-    if(sys.argv[1] == "-r"):
-        rospy.Subscriber("/camera/color/image_raw", Img, visualRecorder)
-    else:
-        print("Error: Argument \'" + sys.argv[1] + "\' not recognized.")
-        sys.exit()
+    
+    rospy.Subscriber("/camera/color/image_raw", Img, visualRecorder)
 
     # spin() simply keeps python from exiting until this node is stopped
     rospy.spin()
-
-
-if __name__ == '__main__':
-    if(len(sys.argv) < 2):
-        print("Error: Mode argument required")
-        sys.exit()
-    elif(sys.argv[1][0] != '-'):
-        print("Error: Argument \'" + sys.argv[1] + "\' is not recognized. Please enter valid mode.")
-    else:
-        if(len(sys.argv) > 2):
-            listener(True)
-        else:
-            listener(False)
