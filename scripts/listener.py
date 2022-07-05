@@ -31,7 +31,7 @@ def visualRecorder(data):
         rospy.signal_shutdown("OpenCV VideoWriter is no longer open. Program ending.")
 
 if __name__ == '__main__':
-    lrospy.init_node('listener', anonymous=True)
+    rospy.init_node('listener', anonymous=True)
     rospy.on_shutdown(endProgram)
     
     rospy.Subscriber("/camera/color/image_raw", Img, visualRecorder)
